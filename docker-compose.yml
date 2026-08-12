@@ -1,0 +1,13 @@
+# ResumePilot - single-image stack
+#
+# One image contains everything: React site embedded in the Spring Boot jar.
+# Backend : Spring Boot (Java 21) serves website + API on :8080, config via backend/.env
+# Frontend: built into the same jar (no separate Nginx container)
+
+services:
+  backend:
+    build: .
+    env_file: ./backend/.env
+    restart: unless-stopped
+    ports:
+      - "8080:8080"

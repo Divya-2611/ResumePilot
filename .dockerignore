@@ -1,0 +1,12 @@
+# Secrets - never bake into an image
+.env
+
+# Never copy the working tree's build junk (everything is rebuilt in-image)
+.git
+**/node_modules
+**/target
+**/dist
+*.log
+.DS_Store
+.idea/
+.vscode/

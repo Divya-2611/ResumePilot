@@ -1,0 +1,42 @@
+server:
+  port: 0
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:resume_optimizer;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  mail:
+    host: localhost
+    port: 25
+    username: test
+    password: test
+
+management:
+  health:
+    mail:
+      enabled: false
+
+app:
+  jwt:
+    secret: test-secret-key-with-enough-length-0123456789abcdef
+  admin:
+    email: admin@test.local
+    password: test-admin-secret
+  upload:
+    dir: ./target/test-uploads
+  ai:
+    provider: OPENAI
+    openai:
+      api-key: ""
+    gemini:
+      api-key: ""
+    claude:
+      api-key: ""
