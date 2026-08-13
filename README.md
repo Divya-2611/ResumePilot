@@ -15,7 +15,7 @@ with a keyword match score, side-by-side diff, version history, and PDF/DOCX dow
 - Job description paste/upload with skills, keywords, and requirements extraction
 - AI resume optimization with side-by-side diff, ATS keyword analysis, and score gauge
 - Optimized resume download as PDF or DOCX; full optimization history
-- Role-based access (USER / ADMIN) with an admin panel (user list, promote/demote, delete), profile picture, change password, dark/light mode, toasts, skeletons, pagination + search
+- Role-based access (USER / ADMIN) with an admin panel (user list, promote/demote, delete), change password, dark/light mode, toasts, skeletons, pagination + search
 
 ## Project Layout
 
@@ -121,7 +121,7 @@ milliseconds, even from India.
 | Area | Endpoints |
 |---|---|
 | Auth | `POST /auth/register`, `/auth/verify-otp`, `/auth/resend-otp`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/forgot-password`, `/auth/verify-reset-otp`, `/auth/reset-password` |
-| Users | `GET /users/profile`, `PUT /users/profile`, `PUT /users/profile/picture`, `GET /users/profile-picture`, `PUT /users/change-password`, `DELETE /users/profile` |
+| Users | `GET /users/profile`, `PUT /users/profile` (first/last name only — email is immutable after registration), `PUT /users/change-password`, `DELETE /users/profile` |
 | Resumes | `POST /resumes/upload`, `POST /resumes/create`, `GET /resumes/all`, `GET /resumes/{id}`, `PUT /resumes/update/{id}`, `DELETE /resumes/delete/{id}`, `POST /resumes/duplicate/{id}`, `POST /resumes/favorite/{id}` |
 | Versions | `GET /resumes/{id}/versions`, `POST /resumes/save`, `POST /resumes/{id}/restore/{versionId}`, `POST /resumes/versions/{versionId}/favorite`, `PUT /resumes/{resumeId}/versions/{versionId}/rename`, `DELETE /resumes/{resumeId}/versions/{versionId}` |
 | Job Descriptions | `POST /jobs/paste-jd`, `POST /jobs/upload-jd` |
@@ -142,7 +142,7 @@ Responses use a unified `ApiResponse` wrapper: `{ "success": true, "message": ".
 
 - `database/schema.sql` is the reference production DDL; dev uses Hibernate `ddl-auto=update`.
 - Refresh tokens are stored as SHA-256 hashes and rotated on every use (old tokens are revoked).
-- Files (resumes, JD files, profile pictures) are stored as BLOBs in the `stored_files`
+- Files (resumes and JD files) are stored as BLOBs in the `stored_files`
   table (`STORAGE_MODE=db`, the default). References in the DB look like `db://{id}`.
   Set `STORAGE_MODE=local` to fall back to `uploads/{userId}/...` on disk.
 - Production checklist: set a strong `JWT_SECRET`, real mail credentials, an AI API key,
