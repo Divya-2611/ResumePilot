@@ -14,7 +14,7 @@ import { tokenStorage } from '../api/axiosClient';
  * Profile: personal info, change password, delete account.
  */
 export default function Profile() {
-  const { user, updateUser, logout } = useAuth();
+  const { user, setUser: updateUser, logout } = useAuth();
   const toast = useToast();
 
   const [saving, setSaving] = useState(false);
