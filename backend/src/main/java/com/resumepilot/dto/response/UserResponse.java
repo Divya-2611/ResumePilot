@@ -3,7 +3,7 @@ package com.resumepilot.dto.response;
 import java.util.List;
 
 /**
- * User profile payload. The picture is served from a dedicated endpoint.
+ * User profile payload.
  */
 public record UserResponse(
         Long id,
@@ -12,7 +12,6 @@ public record UserResponse(
         String email,
         String emailVerified,
         List<String> roles,
-        String profilePictureUrl,
         String createdAt
 ) {
 }

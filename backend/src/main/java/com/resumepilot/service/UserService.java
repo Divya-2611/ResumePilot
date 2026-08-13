@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Profile management: read/update profile, avatar upload, account deletion.
@@ -88,38 +87,9 @@ public class UserService {
     public UserResponse updateProfile(Long userId, ProfileUpdateRequest request) {
         User user = getUser(userId);
 
-        // Reject email changes that collide with an existing account.
-        if (request.email() != null
-                && !request.email().equalsIgnoreCase(user.getEmail())
-                && userRepository.existsByEmailIgnoreCase(request.email())) {
-            throw new BadRequestException("Email is already in use");
-        }
-
+        // Email is immutable after registration; only names can be updated.
         user.setFirstName(request.firstName().trim());
         user.setLastName(request.lastName().trim());
-        if (request.email() != null) {
-            user.setEmail(request.email().trim().toLowerCase());
-        }
-        userRepository.save(user);
-        return UserMapper.toResponse(user);
-    }
-
-    /** Stores the avatar file and updates the user record. */
-    @Transactional
-    public UserResponse updateProfilePicture(Long userId, MultipartFile file) {
-        User user = getUser(userId);
-        if (file == null || file.isEmpty()) {
-            throw new BadRequestException("No file provided");
-        }
-        if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
-            throw new BadRequestException("Only image files are allowed");
-        }
-
-        String stored = fileStorageService.store(userId, "profile", file, "jpg,png,jpeg,webp,svg");
-        if (user.getProfilePicturePath() != null) {
-            fileStorageService.delete(user.getProfilePicturePath());
-        }
-        user.setProfilePicturePath(stored);
         userRepository.save(user);
         return UserMapper.toResponse(user);
     }

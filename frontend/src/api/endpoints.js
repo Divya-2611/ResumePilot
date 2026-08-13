@@ -15,8 +15,6 @@ export const ENDPOINTS = {
 
   // Users
   profile: '/users/profile',
-  profilePicture: '/users/profile/picture',
-  profilePictureGet: '/users/profile-picture',
   changePassword: '/users/change-password',
 
   // Resumes

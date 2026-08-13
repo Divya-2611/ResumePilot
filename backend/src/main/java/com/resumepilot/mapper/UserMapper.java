@@ -24,8 +24,6 @@ public final class UserMapper {
                 user.getEmail(),
                 user.isEmailVerified() ? "VERIFIED" : "PENDING",
                 roles,
-                user.getProfilePicturePath() != null
-                        ? "/api/v1/users/profile-picture" : null,
                 user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
     }
 }

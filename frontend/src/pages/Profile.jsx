@@ -1,70 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Camera, Trash2, KeyRound } from 'lucide-react';
+import { KeyRound, Trash2 } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Modal from '../components/common/Modal';
 import Spinner from '../components/common/Spinner';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { getErrorMessage } from '../utils/helpers';
-import { isValidEmail, isImageFile } from '../utils/validators';
 import userService from '../services/userService';
 import { tokenStorage } from '../api/axiosClient';
 
 /**
- * Profile: personal info, avatar, change password, delete account.
+ * Profile: personal info, change password, delete account.
  */
 export default function Profile() {
   const { user, updateUser, logout } = useAuth();
   const toast = useToast();
-  const fileRef = useRef(null);
 
   const [saving, setSaving] = useState(false);
-  const [uploadingPic, setUploadingPic] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [pictureUrl, setPictureUrl] = useState(null);
 
-  // The picture endpoint requires auth, so fetch it as a blob through axios
-  // (a plain <img src> cannot send the Bearer header).
-  useEffect(() => {
-    if (!user?.profilePictureUrl) {
-      setPictureUrl(null);
-      return;
-    }
-    let revoked = false;
-    userService
-      .getProfilePicture()
-      .then((url) => {
-        if (!revoked) setPictureUrl(url);
-      })
-      .catch(() => setPictureUrl(null));
-    return () => {
-      revoked = true;
-      setPictureUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return null;
-      });
-    };
-  }, [user?.profilePictureUrl]);
-
-  const refreshPicture = useCallback(async () => {
-    try {
-      const url = await userService.getProfilePicture();
-      setPictureUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return url;
-      });
-    } catch {
-      setPictureUrl(null);
-    }
-  }, []);
-
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
-      email: user?.email || '',
     },
   });
 
@@ -75,32 +35,12 @@ export default function Profile() {
     try {
       const updated = await userService.updateProfile(data);
       updateUser(updated);
+      reset({ firstName: updated.firstName, lastName: updated.lastName });
       toast.success('Profile updated');
     } catch (err) {
       toast.error(getErrorMessage(err));
     } finally {
       setSaving(false);
-    }
-  };
-
-  const uploadPicture = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!isImageFile(file)) {
-      toast.error('Only image files (jpg, png, webp, svg) are allowed');
-      return;
-    }
-    setUploadingPic(true);
-    try {
-      const updated = await userService.uploadProfilePicture(file);
-      updateUser(updated);
-      await refreshPicture();
-      toast.success('Profile picture updated');
-    } catch (err) {
-      toast.error(getErrorMessage(err));
-    } finally {
-      setUploadingPic(false);
-      e.target.value = '';
     }
   };
 
@@ -137,29 +77,11 @@ export default function Profile() {
       <div className="mx-auto max-w-2xl space-y-6">
         <h1 className="text-2xl font-bold">Profile</h1>
 
-        {/* Avatar + info */}
+        {/* Account info */}
         <div className="card p-6">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-3xl font-bold text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
-                {pictureUrl ? (
-                  <img
-                    src={pictureUrl}
-                    alt="Profile"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  (user?.firstName?.[0] || '?').toUpperCase()
-                )}
-              </div>
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="absolute -bottom-1 -right-1 rounded-full bg-brand-600 p-2 text-white shadow hover:bg-brand-700"
-                aria-label="Change profile picture"
-              >
-                {uploadingPic ? <Spinner size={14} className="border-white/40 border-t-white" /> : <Camera className="h-3.5 w-3.5" />}
-              </button>
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={uploadPicture} />
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-100 text-3xl font-bold text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
+              {(user?.firstName?.[0] || '?').toUpperCase()}
             </div>
             <div>
               <p className="text-lg font-semibold">
@@ -196,13 +118,11 @@ export default function Profile() {
               <input
                 id="email"
                 type="email"
-                className="input"
-                {...register('email', {
-                  required: 'Email is required',
-                  validate: (v) => isValidEmail(v) || 'Invalid email format',
-                })}
+                className="input opacity-60"
+                value={user?.email || ''}
+                disabled
               />
-              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+              <p className="mt-1 text-xs text-slate-500">Email cannot be changed after registration.</p>
             </div>
             <div className="sm:col-span-2">
               <button type="submit" className="btn-primary" disabled={saving}>
