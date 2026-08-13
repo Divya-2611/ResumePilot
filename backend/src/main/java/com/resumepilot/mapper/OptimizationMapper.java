@@ -7,6 +7,7 @@ import com.resumepilot.dto.response.HistoryItemResponse;
 import com.resumepilot.dto.response.JobDescriptionResponse;
 import com.resumepilot.entity.JobDescription;
 import com.resumepilot.entity.OptimizationHistory;
+import com.resumepilot.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +47,7 @@ public class OptimizationMapper {
                 jsonToList(jd.getExperienceJson()),
                 jsonToList(jd.getEducationJson()),
                 jsonToList(jd.getToolsJson()),
-                jd.getCreatedAt() != null ? jd.getCreatedAt().toString() : null);
+                DateTimeUtil.toIsoString(jd.getCreatedAt()));
     }
 
     public HistoryItemResponse toHistoryResponse(OptimizationHistory h) {
@@ -64,6 +65,6 @@ public class OptimizationMapper {
                 h.getAiProvider(),
                 h.getStatus().name(),
                 versionId,
-                h.getCreatedAt() != null ? h.getCreatedAt().toString() : null);
+                DateTimeUtil.toIsoString(h.getCreatedAt()));
     }
 }

@@ -4,6 +4,7 @@ import com.resumepilot.dto.response.ResumeResponse;
 import com.resumepilot.dto.response.ResumeVersionResponse;
 import com.resumepilot.entity.Resume;
 import com.resumepilot.entity.ResumeVersion;
+import com.resumepilot.util.DateTimeUtil;
 
 /**
  * Maps between Resume / ResumeVersion entities and DTOs.
@@ -27,8 +28,8 @@ public final class ResumeMapper {
                 r.isOptimized(),
                 r.getAtsScore(),
                 r.getVersions().size(),
-                r.getCreatedAt() != null ? r.getCreatedAt().toString() : null,
-                r.getUpdatedAt() != null ? r.getUpdatedAt().toString() : null);
+                DateTimeUtil.toIsoString(r.getCreatedAt()),
+                DateTimeUtil.toIsoString(r.getUpdatedAt()));
     }
 
     public static ResumeVersionResponse toVersionResponse(ResumeVersion v) {
@@ -43,6 +44,6 @@ public final class ResumeMapper {
                 v.getKeywordMatchPercent(),
                 v.isAiGenerated(),
                 v.isFavorite(),
-                v.getCreatedAt() != null ? v.getCreatedAt().toString() : null);
+                DateTimeUtil.toIsoString(v.getCreatedAt()));
     }
 }

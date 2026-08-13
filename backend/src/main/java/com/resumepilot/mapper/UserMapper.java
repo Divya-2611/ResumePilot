@@ -2,6 +2,7 @@ package com.resumepilot.mapper;
 
 import com.resumepilot.dto.response.UserResponse;
 import com.resumepilot.entity.User;
+import com.resumepilot.util.DateTimeUtil;
 
 import java.util.List;
 
@@ -24,6 +25,6 @@ public final class UserMapper {
                 user.getEmail(),
                 user.isEmailVerified() ? "VERIFIED" : "PENDING",
                 roles,
-                user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
+                DateTimeUtil.toIsoString(user.getCreatedAt()));
     }
 }

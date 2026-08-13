@@ -9,6 +9,7 @@ import com.resumepilot.mapper.UserMapper;
 import com.resumepilot.repository.DownloadRecordRepository;
 import com.resumepilot.repository.OptimizationHistoryRepository;
 import com.resumepilot.repository.ResumeRepository;
+import com.resumepilot.util.DateTimeUtil;
 import com.resumepilot.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -67,7 +68,7 @@ public class AnalyticsService {
     public List<String[]> historyRowsForExport(Long userId) {
         return historyRepository.findByUserId(userId).stream()
                 .map(h -> new String[]{
-                        h.getCreatedAt() != null ? h.getCreatedAt().toString() : "",
+                        DateTimeUtil.toIsoString(h.getCreatedAt()),
                         h.getResume() != null ? h.getResume().getName() : "",
                         h.getJobDescription() != null ? h.getJobDescription().getTitle() : "",
                         h.getAtsScore() != null ? String.valueOf(h.getAtsScore()) : "",
