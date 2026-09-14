@@ -146,4 +146,4 @@ Responses use a unified `ApiResponse` wrapper: `{ "success": true, "message": ".
   table (`STORAGE_MODE=db`, the default). References in the DB look like `db://{id}`.
   Set `STORAGE_MODE=local` to fall back to `uploads/{userId}/...` on disk.
 - Production checklist: set a strong `JWT_SECRET`, real mail credentials, an AI API key,
-  switch `JPA_DDL_AUTO=validate` (or add Flyway), and run behind HTTPS.
+  switch `JPA_DDL_AUTO=validate` , and run behind HTTPS.
